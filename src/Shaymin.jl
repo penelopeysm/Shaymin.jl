@@ -5,7 +5,7 @@ export normal
 using Distributions
 
 function normal()
-    return rand(Normal(0, 1))
+    return rand(Normal(0, 2))
 end
 
 end # module Shaymin
