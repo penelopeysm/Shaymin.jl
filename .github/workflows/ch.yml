@@ -18,6 +18,7 @@ jobs:
       - name: Run (my fork of) CompatHelper
         env:
           JULIA_DEBUG: all
+          JULIA_COMPATHELPER_ENABLE_SSH_VERBOSE: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           COMPATHELPER_PRIV: ${{ secrets.DOCUMENTER_KEY }}
         shell: julia --color=yes --project=. {0}
