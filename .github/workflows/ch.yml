@@ -1,6 +1,9 @@
 name: ch
 
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
@@ -8,11 +11,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Add my CompatHelper fork
-        run: julia -e 'using Pkg; Pkg.add(url="https://github.com/penelopeysm/CompatHelper.jl", rev="main")'
-
-      - name: Run CompatHelper
+      - name: Run (my fork of) CompatHelper
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           COMPATHELPER_PRIV: ${{ secrets.DOCUMENTER_KEY }}
-        run: julia -e 'using CompatHelper; CompatHelper.main()'
+        shell: julia --color=yes --project=. {0}
+        run: |
+          using Pkg
+          Pkg.add(url="https://github.com/penelopeysm/CompatHelper.jl", rev="main")
+          using CompatHelper
+          CompatHelper.main()
