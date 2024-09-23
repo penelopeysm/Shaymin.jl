@@ -1,9 +1,11 @@
 module Shaymin
 
+export normal
+
 using Distributions
 
-function normal(x::Float64, μ::Float64, σ::Float64)
-    return rand(Normal(μ, σ))
+function normal()
+    return rand(Normal(0, 1))
 end
 
 end # module Shaymin
