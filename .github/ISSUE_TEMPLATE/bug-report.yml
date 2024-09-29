@@ -8,28 +8,30 @@ body:
     attributes:
       value: |
         Thank you for taking the time to fill out this bug report!
+        
+        To make sure we can pinpoint the issue and fix it as quickly as possible, we ask you to provide some information about the bug you encountered.
+        Please fill out the form below.
 
   - type: textarea
     id: mwe
     attributes:
       label: Minimal working example
-      description: Please provide the code that led to the bug. Ideally, simplify it as much as possible.
+      description: Provide the code that led to the bug. Ideally, simplify it as much as possible.
     validations:
       required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Describe the bug you encountered – what happened, and what did you expect to happen?
 
   - type: textarea
     id: versioninfo
     attributes:
       label: Julia version info
-      description: Please paste the output of `versioninfo()` below
-      value: |
-        <details>
-            <summary>Version info</summary>
-
-        ```
-        (Paste here)
-        ```
-        </details>
+      description: Paste the output of `versioninfo()` below
+      render: julia
     validations:
       required: true
 
@@ -37,15 +39,8 @@ body:
     id: manifest
     attributes:
       label: Manifest
-      description: Please paste the output of `]st --manifest` below
-      value: |
-        <details>
-            <summary>Manifest</summary>
-
-        ```
-        (Paste here)
-        ```
-        </details>
+      description: Paste the output of `]st --manifest` below
+      render: julia
     validations:
       required: true
 
