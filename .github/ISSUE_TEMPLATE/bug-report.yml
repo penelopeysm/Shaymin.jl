@@ -7,16 +7,16 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thank you for taking the time to fill out this bug report!
+        Thank you for submitting a bug report to Turing.jl!
         
-        To make sure we can pinpoint the issue and fix it as quickly as possible, we ask you to provide some information about the bug you encountered.
-        Please fill out the form below.
+        To make sure we can pinpoint the issue and fix it as quickly as possible, we ask you to provide some information about the bug you encountered. Please fill out the form below.
 
   - type: textarea
     id: mwe
     attributes:
       label: Minimal working example
-      description: Provide the code that led to the bug. Ideally, simplify it as much as possible.
+      description: Provide the code that led to the bug. Ideally, simplify it as much as possible. This will be formatted as Julia code, so no need for backticks.
+      render: julia
     validations:
       required: true
 
@@ -30,7 +30,7 @@ body:
     id: versioninfo
     attributes:
       label: Julia version info
-      description: Paste the output of `versioninfo()` below
+      description: Paste the output of `versioninfo()` here
       render: julia
     validations:
       required: true
@@ -39,8 +39,7 @@ body:
     id: manifest
     attributes:
       label: Manifest
-      description: Paste the output of `]st --manifest` below
+      description: Paste the output of `]st --manifest` here
       render: julia
     validations:
       required: true
-
