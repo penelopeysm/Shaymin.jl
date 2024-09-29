@@ -1,0 +1,51 @@
+name: Bug Report
+description: File a bug report.
+labels: ["bug"]
+# projects: ["TuringLang/3"]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for taking the time to fill out this bug report!
+
+  - type: textarea
+    id: mwe
+    attributes:
+      label: Minimal working example
+      description: Please provide the code that led to the bug. Ideally, simplify it as much as possible.
+    validations:
+      required: true
+
+  - type: textarea
+    id: versioninfo
+    attributes:
+      label: Julia version info
+      description: Please paste the output of `versioninfo()` below
+      value: |
+        <details>
+            <summary>Version info</summary>
+
+        ```
+        (Paste here)
+        ```
+        </details>
+    validations:
+      required: true
+
+  - type: textarea
+    id: manifest
+    attributes:
+      label: Manifest
+      description: Please paste the output of `]st --manifest` below
+      value: |
+        <details>
+            <summary>Manifest</summary>
+
+        ```
+        (Paste here)
+        ```
+        </details>
+    validations:
+      required: true
+
