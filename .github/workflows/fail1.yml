@@ -47,3 +47,6 @@ jobs:
               reshape(mean(r; dims = 1), 2, 2)
           end
         shell: julia --color=yes {0}
+
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
