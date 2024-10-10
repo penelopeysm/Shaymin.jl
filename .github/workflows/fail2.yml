@@ -25,6 +25,7 @@ jobs:
           arch: 'x86'
 
       - uses: julia-actions/cache@v2
+        if: always()
 
       - run: |
           using Pkg

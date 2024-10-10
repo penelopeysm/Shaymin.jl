@@ -14,7 +14,6 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-latest
-    continue-on-error: true
 
     steps:
       - uses: actions/checkout@v4
@@ -25,6 +24,7 @@ jobs:
           arch: 'x86'
 
       - uses: julia-actions/cache@v2
+        if: always()
 
       - run: |
           using Pkg
@@ -50,4 +50,5 @@ jobs:
         shell: julia --color=yes {0}
 
       - name: Setup tmate session
+        if: always()
         uses: mxschmitt/action-tmate@v3
