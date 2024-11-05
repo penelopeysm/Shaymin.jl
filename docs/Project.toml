@@ -1,0 +1,3 @@
+[deps]
+Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
+Shaymin = "192d25ac-34f3-4c6c-87b5-50efcda39bcf"
