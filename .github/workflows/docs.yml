@@ -26,8 +26,17 @@ jobs:
       - name: Build docs
         run: julia --project=docs/ --color=yes docs/make.jl
 
+      - name: Run tree
+        run: |
+          sudo apt-get install tree
+          tree docs
+
       - name: Insert navigation bar
         uses: shravanngoswamii/DocsNav@py/locally
+
+      - name: Run tree again
+        run: |
+          tree docs
 
       - name: Deploy docs
         run: julia --project=docs/ --color=yes -e 'using Documenter; deploydocs(; repo="github.com/penelopeysm/Shaymin.jl.git", push_preview=true)'
