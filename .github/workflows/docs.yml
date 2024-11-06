@@ -23,7 +23,13 @@ jobs:
       - name: Instantiate docs project
         run: julia --project=docs/ -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd())); Pkg.instantiate()'
 
-      - name: Build and upload docs
+      - name: Build docs
+        run: julia --project=docs/ --color=yes docs/make.jl
+
+      - name: Insert navigation bar
+        uses: shravanngoswamii/DocsNav@py/locally
+
+      - name: Deploy docs
+        run: julia --project=docs/ --color=yes -e 'using Documenter; deploydocs(; repo="github.com/penelopeysm/Shaymin.jl.git", push_preview=true)'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: julia --project=docs/ --color=yes docs/make.jl
