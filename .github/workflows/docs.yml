@@ -39,6 +39,7 @@ jobs:
           tree docs
 
       - name: Deploy docs
-        run: julia --project=docs/ --color=yes -e 'using Documenter; deploydocs(; repo="github.com/penelopeysm/Shaymin.jl.git", push_preview=true)'
+        working-directory: docs
+        run: julia --project=. --color=yes -e 'using Documenter; deploydocs(; repo="github.com/penelopeysm/Shaymin.jl.git", push_preview=true)'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
