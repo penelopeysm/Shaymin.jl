@@ -9,7 +9,7 @@ jobs:
     steps:
       - name: Fail
         run: exit 1
-        continue-on-error: true
 
       - name: Echo
+        if: always()
         run: echo "Hello, world!"
