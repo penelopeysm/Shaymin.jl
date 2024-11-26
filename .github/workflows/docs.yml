@@ -1,6 +1,7 @@
 on:
   push:
-    branches: [main]
+    branches:
+      - "*"
 
 jobs:
   test:
@@ -11,5 +12,5 @@ jobs:
         run: exit 1
 
       - name: Echo
-        if: always()
+        if: ${{ always() && github.ref == 'refs/heads/main' }}
         run: echo "Hello, world!"
