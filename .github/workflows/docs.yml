@@ -3,11 +3,13 @@ on:
     branches: [main]
 
 jobs:
-  build-docs:
-    permissions:
-      contents: write
+  test:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Build Documenter.jl docs
-        uses: TuringLang/DocsNav/DocsDocumenter@py/multiple-actions
+      - name: Fail
+        run: exit 1
+        continue-on-error: true
+
+      - name: Echo
+        run: echo "Hello, world!"
