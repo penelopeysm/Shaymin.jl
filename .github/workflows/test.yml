@@ -1,0 +1,47 @@
+on:
+  push:
+    branches:
+      - "*"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install Julia
+        uses: julia-actions/setup-julia@v2
+        with:
+          version: '1'
+          arch: x86
+
+      - name: Test
+        shell: julia --color=yes --threads=2 {0}
+        run: |
+          import Pkg
+          Pkg.add("Turing")
+          Pkg.add("Test")
+
+          @model function test()
+              z ~ Normal(0, 1)
+              x ~ Bernoulli(1)
+              1 ~ Bernoulli(x / 2)
+              0 ~ Bernoulli(x / 2)
+              return x
+          end
+
+          is = IS()
+          smc = SMC()
+          pg = PG(10)
+
+          res_is = sample(test(), is, 10000)
+          res_smc = sample(test(), smc, 1000)
+          res_pg = sample(test(), pg, 100)
+
+          @test all(isone, res_is[:x])
+          @test res_is.logevidence ≈ 2 * log(0.5)
+
+          @test all(isone, res_smc[:x])
+          @test res_smc.logevidence ≈ 2 * log(0.5)
+
+          @test all(isone, res_pg[:x])
+
