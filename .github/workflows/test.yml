@@ -21,7 +21,7 @@ jobs:
           Pkg.add("Turing")
           Pkg.add("Test")
 
-          using Turing
+          using Turing, Test
 
           @model function test()
               z ~ Normal(0, 1)
