@@ -15,12 +15,8 @@ jobs:
           arch: x86
 
       - name: Test
-        shell: julia --color=yes --threads=2 {0}
+        shell: julia --color=yes --threads=2 --project=.github/workflows {0}
         run: |
-          import Pkg
-          Pkg.add("Turing")
-          Pkg.add("Test")
-
           using Turing, Test
 
           @model function test()
