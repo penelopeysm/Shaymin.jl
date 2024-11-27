@@ -21,6 +21,8 @@ jobs:
           Pkg.add("Turing")
           Pkg.add("Test")
 
+          using Turing
+
           @model function test()
               z ~ Normal(0, 1)
               x ~ Bernoulli(1)
