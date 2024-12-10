@@ -1,0 +1,28 @@
+on:
+  push:
+    branches:
+      - "*"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch:
+          - x64
+          - x86
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: julia-actions/setup-julia@v2
+        with:
+          version: '1'
+          arch: ${{ matrix.arch }}
+
+      - name: Test
+        shell: julia --color=yes --project=. {0}
+        run: |
+          using Pkg
+          Pkg.instantiate()
+          Pkg.test()
