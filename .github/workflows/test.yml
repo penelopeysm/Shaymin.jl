@@ -11,6 +11,9 @@ jobs:
         arch:
           - x64
           - x86
+        threads:
+          - 1
+          - 2
 
     steps:
       - uses: actions/checkout@v4
@@ -21,7 +24,7 @@ jobs:
           arch: ${{ matrix.arch }}
 
       - name: Test
-        shell: julia --color=yes --project=. {0}
+        shell: julia --color=yes --project=. --threads=${{ matrix.threads }} {0}
         run: |
           using Pkg
           Pkg.instantiate()
