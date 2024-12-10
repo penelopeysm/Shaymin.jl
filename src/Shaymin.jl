@@ -2,8 +2,6 @@ module Shaymin
 
 export shay
 
-using Distributions
-
 """
     shay()
 
@@ -12,7 +10,7 @@ Generate a very cute number from a normal distribution.
 ```jldoctest
 julia> using Shaymin, Random
 
-julia> Random.seed!(492)
+julia> Random.seed!(492)  # Shaymin's Pokedex number
 TaskLocalRNG()
 
 julia> shay()
@@ -20,7 +18,7 @@ julia> shay()
 ```
 """
 function shay()
-    return rand(Normal(0, 1))
+    return randn()
 end
 
 end # module Shaymin
