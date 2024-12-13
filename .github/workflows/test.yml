@@ -26,15 +26,16 @@ jobs:
           using Chairmarks
           using Distributions
 
-          @model function g()
+          @model function g1()
               return x ~ Normal()
           end
-          @model function f()
-              x = @submodel g()
+          @model function f1()
+              x = @submodel g1()
               return y ~ Normal(x, 1)
           end
 
-          @be f()()
+          t = @be f1()()
+          show(Base.stdout, MIME"text/plain"(), t)
 
       - name: DynamicPPL@0.31.1 (old syntax)
         shell: julia --color=yes --project=. {0}
@@ -46,15 +47,16 @@ jobs:
           using Chairmarks
           using Distributions
 
-          @model function g()
+          @model function g2()
               return x ~ Normal()
           end
-          @model function f()
-              x = @submodel g()
+          @model function f2()
+              x = @submodel g2()
               return y ~ Normal(x, 1)
           end
 
-          @be f()()
+          t = @be f2()()
+          show(Base.stdout, MIME"text/plain"(), t)
 
       - name: DynamicPPL@0.31.1 (new syntax)
         shell: julia --color=yes --project=. {0}
@@ -66,12 +68,13 @@ jobs:
           using Chairmarks
           using Distributions
 
-          @model function g()
+          @model function g3()
               return x ~ Normal()
           end
-          @model function f()
-              x ~ to_submodel(g())
+          @model function f3()
+              x ~ to_submodel(g3())
               return y ~ Normal(x, 1)
           end
 
-          @be f()()
+          t = @be f3()()
+          show(Base.stdout, MIME"text/plain"(), t)
