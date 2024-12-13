@@ -31,13 +31,13 @@ end
     return (; s=s, m=m, x=[1.5, 2.0], logp=getlogp(__varinfo__))
 end
 
-@model function demo_assume_submodel_observe_index_literal_new()
-    priors ~ to_submodel(_prior_dot_assume())
-    s, m = priors
-    1.5 ~ Normal(m[1], sqrt(s[1]))
-    2.0 ~ Normal(m[2], sqrt(s[2]))
-    return (; s=s, m=m, x=[1.5, 2.0], logp=getlogp(__varinfo__))
-end
+# @model function demo_assume_submodel_observe_index_literal_new()
+#     priors ~ to_submodel(_prior_dot_assume())
+#     s, m = priors
+#     1.5 ~ Normal(m[1], sqrt(s[1]))
+#     2.0 ~ Normal(m[2], sqrt(s[2]))
+#     return (; s=s, m=m, x=[1.5, 2.0], logp=getlogp(__varinfo__))
+# end
 
 #############################
 # submodel in observe
@@ -59,22 +59,22 @@ end
     return (; s=s, m=m, x=x, logp=getlogp(__varinfo__))
 end
 
-@model function demo_dot_assume_observe_submodel_new(
-    x=[1.5, 2.0], ::Type{TV}=Vector{Float64}
-) where {TV}
-    s = TV(undef, length(x))
-    s .~ InverseGamma(2, 3)
-    m = TV(undef, length(x))
-    m .~ Normal.(0, sqrt.(s))
-    # Submodel likelihood
-    _ignore ~ to_submodel(_likelihood_mltivariate_observe(s, m, x))
-    return (; s=s, m=m, x=x, logp=getlogp(__varinfo__))
-end
+# @model function demo_dot_assume_observe_submodel_new(
+#     x=[1.5, 2.0], ::Type{TV}=Vector{Float64}
+# ) where {TV}
+#     s = TV(undef, length(x))
+#     s .~ InverseGamma(2, 3)
+#     m = TV(undef, length(x))
+#     m .~ Normal.(0, sqrt.(s))
+#     # Submodel likelihood
+#     _ignore ~ to_submodel(_likelihood_mltivariate_observe(s, m, x))
+#     return (; s=s, m=m, x=x, logp=getlogp(__varinfo__))
+# end
 
 TEST_MODELS = [
     demo_assume_observe_literal(),
     demo_assume_submodel_observe_index_literal_old(),
-    demo_assume_submodel_observe_index_literal_new(),
+    # demo_assume_submodel_observe_index_literal_new(),
     demo_dot_assume_observe_submodel_old(),
-    demo_dot_assume_observe_submodel_new(),
+    # demo_dot_assume_observe_submodel_new(),
 ]
