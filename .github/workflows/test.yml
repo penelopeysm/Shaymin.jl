@@ -6,14 +6,6 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        arch:
-          - x64
-          - x86
-        threads:
-          - 1
-          - 2
 
     steps:
       - uses: actions/checkout@v4
@@ -23,11 +15,62 @@ jobs:
           version: '1'
           arch: ${{ matrix.arch }}
 
-      - name: Test
+      - name: DynamicPPL@0.31.0 (old syntax)
         shell: julia --color=yes --project=. {0}
-        env:
-          JULIA_NUM_THREADS: ${{ matrix.threads }}
         run: |
           using Pkg
-          Pkg.instantiate()
-          Pkg.test()
+          Pkg.add(name="DynamicPPL", version="0.31.0")
+          Pkg.add("Chairmarks")
+
+          using DynamicPPL
+          using Chairmarks
+
+          @model function g()
+              return x ~ Normal()
+          end
+          @model function f()
+              x = @submodel g()
+              return y ~ Normal(x, 1)
+          end
+
+          @be f()()
+
+      - name: DynamicPPL@0.31.1 (old syntax)
+        shell: julia --color=yes --project=. {0}
+        run: |
+          using Pkg
+          Pkg.add(name="DynamicPPL", version="0.31.1")
+          Pkg.add("Chairmarks")
+
+          using DynamicPPL
+          using Chairmarks
+
+          @model function g()
+              return x ~ Normal()
+          end
+          @model function f()
+              x = @submodel g()
+              return y ~ Normal(x, 1)
+          end
+
+          @be f()()
+
+      - name: DynamicPPL@0.31.1 (new syntax)
+        shell: julia --color=yes --project=. {0}
+        run: |
+          using Pkg
+          Pkg.add(name="DynamicPPL", version="0.31.1")
+          Pkg.add("Chairmarks")
+
+          using DynamicPPL
+          using Chairmarks
+
+          @model function g()
+              return x ~ Normal()
+          end
+          @model function f()
+              x ~ to_submodel(g())
+              return y ~ Normal(x, 1)
+          end
+
+          @be f()()
