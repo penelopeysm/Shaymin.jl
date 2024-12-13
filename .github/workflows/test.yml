@@ -13,7 +13,6 @@ jobs:
       - uses: julia-actions/setup-julia@v2
         with:
           version: '1'
-          arch: ${{ matrix.arch }}
 
       - name: DynamicPPL@0.31.0 (old syntax)
         shell: julia --color=yes --project=. {0}
