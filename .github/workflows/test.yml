@@ -39,8 +39,6 @@ jobs:
           @model function demo_assume_submodel_observe_index_literal1()
               # Submodel prior
               @submodel s, m = _prior_dot_assume1()
-              s = vars.s
-              m = vars.m
               1.5 ~ Normal(m[1], sqrt(s[1]))
               2.0 ~ Normal(m[2], sqrt(s[2]))
 
@@ -72,8 +70,6 @@ jobs:
           @model function demo_assume_submodel_observe_index_literal2()
               # Submodel prior
               @submodel s, m = _prior_dot_assume2()
-              s = vars.s
-              m = vars.m
               1.5 ~ Normal(m[1], sqrt(s[1]))
               2.0 ~ Normal(m[2], sqrt(s[2]))
 
