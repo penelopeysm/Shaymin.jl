@@ -45,7 +45,7 @@ jobs:
               return (; s=s, m=m, x=[1.5, 2.0], logp=getlogp(__varinfo__))
           end
 
-          t = @be sample(demo_assume_submodel_observe_index_literal1(), SampleFromUniform(), 100; progress=false)
+          t = @be sample(demo_assume_submodel_observe_index_literal1(), SampleFromUniform(), 1000; progress=false)
           show(Base.stdout, MIME"text/plain"(), t)
 
       - name: DynamicPPL@0.31.5 (old syntax)
@@ -76,7 +76,7 @@ jobs:
               return (; s=s, m=m, x=[1.5, 2.0], logp=getlogp(__varinfo__))
           end
 
-          t = @be sample(demo_assume_submodel_observe_index_literal2(), SampleFromUniform(), 100; progress=false)
+          t = @be sample(demo_assume_submodel_observe_index_literal2(), SampleFromUniform(), 1000; progress=false)
           show(Base.stdout, MIME"text/plain"(), t)
 
       - name: DynamicPPL@0.31.5 (new syntax)
@@ -109,5 +109,5 @@ jobs:
               return (; s=s, m=m, x=[1.5, 2.0], logp=getlogp(__varinfo__))
           end
 
-          t = @be sample(demo_assume_submodel_observe_index_literal3(), SampleFromUniform(), 100; progress=false)
+          t = @be sample(demo_assume_submodel_observe_index_literal3(), SampleFromUniform(), 1000; progress=false)
           show(Base.stdout, MIME"text/plain"(), t)
