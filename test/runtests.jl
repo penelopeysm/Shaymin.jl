@@ -1,15 +1,24 @@
-using Documenter
+using AbstractMCMC
+using Distributions
+using DynamicPPL
+using LinearAlgebra
 using Random
-using Shaymin
 using Test
+using Turing
 
-@testset "doctests" begin
-    DocMeta.setdocmeta!(
-        Shaymin,
-        :DocTestSetup,
-        :(using Shaymin, Random);
-        recursive=true,
-    )
+Random.seed!(100)
 
-    doctest(Shaymin)
+include("models.jl")
+
+samplers = (
+    "SampleFromUniform" => (SampleFromUniform(), 1000),
+    "NUTS" => (NUTS(), 100)
+)
+
+@testset verbose = true "DynamicPPL.jl" begin
+    @testset verbose = true "$(model.f)" for model in TEST_MODELS
+        @testset "$(name) @ $(N) iters" for (name, (spl, N)) in samplers
+            chain_init = sample(model, spl, N; progress=false)
+        end
+    end
 end
