@@ -25,18 +25,29 @@ jobs:
 
           using DynamicPPL
           using Chairmarks
-          using Distributions: Normal
-          using AbstractMCMC: sample
+          using Distributions
+          using AbstractMCMC
 
-          @model function g1()
-              return x ~ Normal()
-          end
-          @model function f1()
-              x = @submodel g1()
-              return y ~ Normal(x, 1)
+          @model function _prior_dot_assume1(::Type{TV}=Vector{Float64}) where {TV}
+              s = TV(undef, 2)
+              s .~ InverseGamma(2, 3)
+              m = TV(undef, 2)
+              m .~ Normal.(0, sqrt.(s))
+              return s, m
           end
 
-          t = @be sample(f1(), SampleFromUniform(), 100; progress=false)
+          @model function demo_assume_submodel_observe_index_literal1()
+              # Submodel prior
+              @submodel s, m = _prior_dot_assume1()
+              s = vars.s
+              m = vars.m
+              1.5 ~ Normal(m[1], sqrt(s[1]))
+              2.0 ~ Normal(m[2], sqrt(s[2]))
+
+              return (; s=s, m=m, x=[1.5, 2.0], logp=getlogp(__varinfo__))
+          end
+
+          t = @be sample(demo_assume_submodel_observe_index_literal1(), SampleFromUniform(), 100; progress=false)
           show(Base.stdout, MIME"text/plain"(), t)
 
       - name: DynamicPPL@0.31.5 (old syntax)
@@ -47,18 +58,29 @@ jobs:
 
           using DynamicPPL
           using Chairmarks
-          using Distributions: Normal
-          using AbstractMCMC: sample
+          using Distributions
+          using AbstractMCMC
 
-          @model function g2()
-              return x ~ Normal()
-          end
-          @model function f2()
-              x = @submodel g2()
-              return y ~ Normal(x, 1)
+          @model function _prior_dot_assume2(::Type{TV}=Vector{Float64}) where {TV}
+              s = TV(undef, 2)
+              s .~ InverseGamma(2, 3)
+              m = TV(undef, 2)
+              m .~ Normal.(0, sqrt.(s))
+              return s, m
           end
 
-          t = @be sample(f2(), SampleFromUniform(), 100; progress=false)
+          @model function demo_assume_submodel_observe_index_literal2()
+              # Submodel prior
+              @submodel s, m = _prior_dot_assume2()
+              s = vars.s
+              m = vars.m
+              1.5 ~ Normal(m[1], sqrt(s[1]))
+              2.0 ~ Normal(m[2], sqrt(s[2]))
+
+              return (; s=s, m=m, x=[1.5, 2.0], logp=getlogp(__varinfo__))
+          end
+
+          t = @be sample(demo_assume_submodel_observe_index_literal2(), SampleFromUniform(), 100; progress=false)
           show(Base.stdout, MIME"text/plain"(), t)
 
       - name: DynamicPPL@0.31.5 (new syntax)
@@ -69,16 +91,27 @@ jobs:
 
           using DynamicPPL
           using Chairmarks
-          using Distributions: Normal
-          using AbstractMCMC: sample
+          using Distributions
+          using AbstractMCMC
 
-          @model function g3()
-              return x ~ Normal()
-          end
-          @model function f3()
-              x ~ to_submodel(g3())
-              return y ~ Normal(x, 1)
+          @model function _prior_dot_assume3(::Type{TV}=Vector{Float64}) where {TV}
+              s = TV(undef, 2)
+              s .~ InverseGamma(2, 3)
+              m = TV(undef, 2)
+              m .~ Normal.(0, sqrt.(s))
+              return (; s=s, m=m)
           end
 
-          t = @be sample(f3(), SampleFromUniform(), 100; progress=false)
+          @model function demo_assume_submodel_observe_index_literal3()
+              # Submodel prior
+              vars ~ to_submodel(_prior_dot_assume3())
+              s = vars.s
+              m = vars.m
+              1.5 ~ Normal(m[1], sqrt(s[1]))
+              2.0 ~ Normal(m[2], sqrt(s[2]))
+
+              return (; s=s, m=m, x=[1.5, 2.0], logp=getlogp(__varinfo__))
+          end
+
+          t = @be sample(demo_assume_submodel_observe_index_literal3(), SampleFromUniform(), 100; progress=false)
           show(Base.stdout, MIME"text/plain"(), t)
