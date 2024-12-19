@@ -23,7 +23,7 @@ Random.seed!(468)
         end
 
         Random.seed!(468)
-        alg = Gibbs(CSMC(15, :a))
+        alg = PG(15)
         chain = sample(StableRNG(468), f(1.5), alg, 50; progress=false)
         @show mean(chain[:a])
         # @show mean(chain[:b])
