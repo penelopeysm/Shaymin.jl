@@ -24,6 +24,11 @@ Random.seed!(468)
         @info x3
     end
 
+    @testset "advancedps" begin
+        x4 = randn(AdvancedPS.TracedRNG(), 3)
+        @info x4
+    end
+
     # @testset "ess"  begin
     #     @model function f(y)
     #         a ~ Normal(0, 1)
