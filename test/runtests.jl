@@ -13,7 +13,7 @@ Random.seed!(468)
     end
 
     @testset "stablerng" begin
-        x2 = rand(StableRNG(1), 10)
+        x2 = rand(StableRNG(468), 10)
         @info x2
         @test length(x2) == 10
     end
@@ -27,7 +27,7 @@ Random.seed!(468)
 
         Random.seed!(468)
         alg = Gibbs(CSMC(15, :a), ESS(:b))
-        chain = sample(StableRNG(468), f(1.5), alg, 50)
+        chain = sample(StableRNG(468), f(1.5), alg, 50; progress=false)
         @show mean(chain[:a])
         @show mean(chain[:b])
     end
