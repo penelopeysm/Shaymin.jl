@@ -28,16 +28,4 @@ Random.seed!(468)
         x4 = randn(AdvancedPS.TracedRNG(), 3)
         @info x4
     end
-
-    # @testset "ess"  begin
-    #     @model function f(y)
-    #         a ~ Normal(0, 1)
-    #         y ~ Normal(a, 1)
-    #     end
-    #     Random.seed!(468)
-    #     alg = AdvancedPS.PG(15)
-    #     chain = sample(StableRNG(468), f(1.5), alg, 50; progress=false)
-    #     @show chain
-    #     # @show mean(chain[:b])
-    # end
 end
