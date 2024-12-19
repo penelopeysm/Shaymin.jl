@@ -56,7 +56,10 @@ Random.seed!(468)
         #     @varname(mu2) => ESS(),
         # )
         alg = Gibbs(CSMC(15, :z1, :z2, :z3, :z4), ESS(:mu1), ESS(:mu2))
-        chain = sample(StableRNG(468), MoGtest_default, alg, 2000)
-        println(chain)
+        chain = sample(StableRNG(468), MoGtest_default, alg, 50)
+        @show mean(chain[:z1])
+        @show mean(chain[:z2])
+        @show mean(chain[:z3])
+        @show mean(chain[:z4])
     end
 end
