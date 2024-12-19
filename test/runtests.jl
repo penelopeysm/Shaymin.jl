@@ -1,7 +1,10 @@
 using Test
 using StableRNGs
 using Random
-using Turing
+using DynamicPPL
+using Distributions
+using AdvancedPS
+using Random123
 
 Random.seed!(468)
 
@@ -16,16 +19,20 @@ Random.seed!(468)
         @info x2
     end
 
-    @testset "ess"  begin
-        @model function f(y)
-            a ~ Normal(0, 1)
-            y ~ Normal(a, 1)
-        end
-
-        Random.seed!(468)
-        alg = PG(15)
-        chain = sample(StableRNG(468), f(1.5), alg, 50; progress=false)
-        @show mean(chain[:a])
-        # @show mean(chain[:b])
+    @testset "random123" begin
+        x3 = randn(Random123.Philox2x(1), 3)
+        @info x3
     end
+
+    # @testset "ess"  begin
+    #     @model function f(y)
+    #         a ~ Normal(0, 1)
+    #         y ~ Normal(a, 1)
+    #     end
+    #     Random.seed!(468)
+    #     alg = AdvancedPS.PG(15)
+    #     chain = sample(StableRNG(468), f(1.5), alg, 50; progress=false)
+    #     @show chain
+    #     # @show mean(chain[:b])
+    # end
 end
