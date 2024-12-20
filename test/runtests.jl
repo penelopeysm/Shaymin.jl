@@ -17,7 +17,7 @@ Random.seed!(468)
     end
 
     @testset "arch" begin
-        @info "arch: $(Sys.ARCH)"
+        @info "is i686: $(Sys.ARCH == :i686)"
     end
 
     @testset "advancedps" begin
