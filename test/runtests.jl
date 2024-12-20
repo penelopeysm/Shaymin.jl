@@ -3,6 +3,7 @@ using StableRNGs
 using Random
 using Turing
 using Distributions
+using RandomNumbers
 
 Random.seed!(468)
 
@@ -24,6 +25,11 @@ Distributions.logpdf(::MyNorm, x) = logpdf(Normal(), x)
     @testset "stablerng" begin
         x2 = randn(StableRNG(468), 3)
         @info x2
+    end
+
+    @testset "randomnumbers" begin
+        s = RandomNumbers.gen_seed(UInt64)
+        @info s
     end
 
     @testset "randomdevice" begin
