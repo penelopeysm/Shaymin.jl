@@ -2,6 +2,7 @@ using Test
 using StableRNGs
 using Random
 using AdvancedPS
+using Turing
 
 Random.seed!(468)
 
@@ -16,8 +17,15 @@ Random.seed!(468)
         @info x2
     end
 
-    @testset "arch" begin
-        @info "is i686: $(Sys.ARCH == :i686)"
+    @testset "ess"  begin
+        @model function f(y)
+            a ~ Normal(0, 1)
+            y ~ Normal(a, 1)
+        end
+        Random.seed!(468)
+        alg = PG(15)
+        chain = sample(StableRNG(468), f(1.5), alg, 50; progress=false)
+        @show mean(chain[:a])
     end
 
     @testset "advancedps" begin
