@@ -1,10 +1,19 @@
 using Test
 using StableRNGs
 using Random
-using AdvancedPS
 using Turing
+using Distributions
 
 Random.seed!(468)
+
+# Define a new normal distribution for tracking
+struct MyNorm <: ContinuousUnivariateDistribution end
+function Distributions.rand(rng::AbstractRNG, ::MyNorm)
+    res = randn(rng)
+    @info "MyNorm with rng: $rng gave result: $res"
+    return res
+end
+Distributions.logpdf(::MyNorm, x) = logpdf(Normal(), x)
 
 @testset verbose = true "Shaymin.jl" begin
     @testset "using global seed" begin
@@ -18,19 +27,12 @@ Random.seed!(468)
     end
 
     @testset "ess"  begin
-        @model function f(y)
-            a ~ Normal(0, 1)
-            y ~ Normal(a, 1)
+        @model function f()
+            x ~ MyNorm()
         end
         Random.seed!(468)
         alg = PG(15)
-        chain = sample(StableRNG(468), f(1.5), alg, 50; progress=false)
-        @show mean(chain[:a])
-    end
-
-    @testset "advancedps" begin
-        Random.seed!(468)
-        x3 = randn(AdvancedPS.TracedRNG(), 3)
-        @info x3
+        chain = sample(StableRNG(468), f(), alg, 10; progress=false)
+        @show mean(chain[:x])
     end
 end
