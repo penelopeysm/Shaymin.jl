@@ -28,22 +28,26 @@ Distributions.logpdf(::MyNorm, x) = logpdf(Normal(), x)
     end
 
     @testset "randomnumbers" begin
+        Random.seed!(468)
         s = RandomNumbers.gen_seed(UInt64)
         @info s
     end
 
     @testset "randomnumbers again" begin
+        Random.seed!(468)
         s = RandomNumbers.gen_seed(UInt64)
         @info s
     end
 
     @testset "randomdevice" begin
+        Random.seed!(468)
         rng = RandomDevice()
         x3 = randn(rng, 3)
         @info x3
     end
 
     @testset "randomdevice again" begin
+        Random.seed!(468)
         rng = RandomDevice()
         x3 = randn(rng, 3)
         @info x3
