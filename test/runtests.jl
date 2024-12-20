@@ -5,6 +5,7 @@ using Turing
 using Distributions
 using RandomNumbers
 
+
 Random.seed!(468)
 
 # Define a new normal distribution for tracking
