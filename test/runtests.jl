@@ -5,9 +5,16 @@ using Turing
 using Distributions
 using RandomNumbers
 using Pkg
+using AdvancedPS
+
+function AdvancedPS.gen_seed(rng::Random.AbstractRNG, ::AdvancedPS.TracedRNG{<:Integer}, sampler::Random.Sampler)
+    x = Random.rand(rng, sampler)
+    @show "1", rng, x
+    return x
+end
 
 # Pkg.develop(path="/Users/pyong/ppl/aps")
-Pkg.add(path="https://github.com/TuringLang/AdvancedPS.jl.git", rev="py/random")
+# Pkg.add(path="https://github.com/TuringLang/AdvancedPS.jl.git", rev="dc902432")
 
 Random.seed!(468)
 
