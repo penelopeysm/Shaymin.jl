@@ -16,7 +16,12 @@ Random.seed!(468)
         @info x2
     end
 
+    @testset "arch" begin
+        @info "arch: $(Sys.ARCH)"
+    end
+
     @testset "advancedps" begin
+        Random.seed!(468)
         x3 = randn(AdvancedPS.TracedRNG(), 3)
         @info x3
     end
