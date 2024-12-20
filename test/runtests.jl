@@ -9,7 +9,7 @@ Random.seed!(468)
 
 # Define a new normal distribution for tracking
 struct MyNorm <: ContinuousUnivariateDistribution end
-function Distributions.rand(rng::AbstractRNG, ::MyNorm)
+function Distributions.rand(rng::Random.AbstractRNG, ::MyNorm)
     res = randn(rng)
     @info "MyNorm with rng: $rng gave result: $res"
     return res
@@ -28,6 +28,11 @@ Distributions.logpdf(::MyNorm, x) = logpdf(Normal(), x)
     end
 
     @testset "randomnumbers" begin
+        s = RandomNumbers.gen_seed(UInt64)
+        @info s
+    end
+
+    @testset "randomnumbers again" begin
         s = RandomNumbers.gen_seed(UInt64)
         @info s
     end
