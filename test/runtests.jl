@@ -32,6 +32,12 @@ Distributions.logpdf(::MyNorm, x) = logpdf(Normal(), x)
         @info x3
     end
 
+    @testset "randomdevice again" begin
+        rng = RandomDevice()
+        x3 = randn(rng, 3)
+        @info x3
+    end
+
     @testset "pg"  begin
         @model function f()
             x ~ MyNorm()
