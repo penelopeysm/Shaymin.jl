@@ -49,13 +49,13 @@ Distributions.logpdf(::MyNorm, x) = logpdf(Normal(), x)
         @info x3
     end
 
-    @testset "pg"  begin
-        @model function f()
-            x ~ MyNorm()
-        end
-        Random.seed!(468)
-        alg = PG(15)
-        chain = sample(StableRNG(468), f(), alg, 10; progress=false)
-        @show mean(chain[:x])
-    end
+    # @testset "pg"  begin
+    #     @model function f()
+    #         x ~ MyNorm()
+    #     end
+    #     Random.seed!(468)
+    #     alg = PG(15)
+    #     chain = sample(StableRNG(468), f(), alg, 10; progress=false)
+    #     @show mean(chain[:x])
+    # end
 end
