@@ -6,6 +6,7 @@ using Distributions
 using RandomNumbers
 using Pkg
 using AdvancedPS
+using Random123
 
 function AdvancedPS.gen_seed(rng::Random.AbstractRNG, ::AdvancedPS.TracedRNG{<:Integer}, sampler::Random.Sampler)
     x = Random.rand(rng, sampler)
@@ -13,9 +14,9 @@ function AdvancedPS.gen_seed(rng::Random.AbstractRNG, ::AdvancedPS.TracedRNG{<:I
     return x
 end
 function AdvancedPS.seed_from_rng!(
-    pc::ParticleContainer{T,<:TracedRNG{R,N,<:Random123.AbstractR123{I}}},
+    pc::AdvancedPS.ParticleContainer{T,<:AdvancedPS.TracedRNG{R,N,<:Random123.AbstractR123{I}}},
     rng::Random.AbstractRNG,
-    ref::Union{Particle,Nothing}=nothing,
+    ref::Union{AdvancedPS.Particle,Nothing}=nothing,
 ) where {T,R,N,I}
     n = length(pc.vals)
     nseeds = isnothing(ref) ? n : n - 1
