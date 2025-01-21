@@ -29,7 +29,7 @@ function AdvancedPS.seed_from_rng!(
         Random.seed!(subrng, AdvancedPS.gen_seed(rng, subrng, sampler))
     end
     Random.seed!(pc.rng, AdvancedPS.gen_seed(rng, pc.rng, sampler))
-
+    @show pc
     return pc
 end
 
