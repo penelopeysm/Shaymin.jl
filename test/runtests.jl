@@ -166,6 +166,22 @@ function AdvancedPS.resample_propagate!(
     return pc
 end
 
+function AdvancedPS.update_keys!(pc::AdvancedPS.ParticleContainer, ref::Union{AdvancedPS.Particle,Nothing}=nothing)
+    # Update keys to new particle ids
+    println("update_keys! begin")
+    @show pc.vals
+    nparticles = length(pc)
+    n = ref === nothing ? nparticles : nparticles - 1
+    for i in 1:n
+        pi = pc.vals[i]
+        k = split(AdvancedPS.state(pi.rng.rng))
+        Random.seed!(pi.rng, k[1])
+    end
+    println("update_keys! end")
+    @show pc.vals
+    return nothing
+end
+
 # Pkg.develop(path="/Users/pyong/ppl/aps")
 # Pkg.add(path="https://github.com/TuringLang/AdvancedPS.jl.git", rev="dc902432")
 
