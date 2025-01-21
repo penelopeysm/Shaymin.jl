@@ -63,6 +63,11 @@ Distributions.logpdf(::MyNorm, x) = logpdf(Normal(), x)
     #     x3 = randn(rng, 3)
     #     @info x3
     # end
+    
+    @testset "tracedrng" begin
+        rng = AdvancedPS.TracedRNG()
+        @show rng
+    end
 
     @testset "pg"  begin
         @model function f()
