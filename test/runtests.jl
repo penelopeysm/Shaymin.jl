@@ -145,6 +145,27 @@ function AdvancedPS.resample_propagate!(
     return pc
 end
 
+function AdvancedPS.resample_propagate!(
+    rng::Random.AbstractRNG,
+    pc::AdvancedPS.ParticleContainer,
+    sampler::T,
+    resampler::AdvancedPS.ResampleWithESSThreshold,
+    ref::Union{AdvancedPS.Particle,Nothing}=nothing;
+    weights=AdvancedPS.getweights(pc),
+) where {T<:AbstractMCMC.AbstractSampler}
+    # Compute the effective sample size ``1 / ∑ wᵢ²`` with normalized weights ``wᵢ``
+    ess = inv(sum(abs2, weights))
+
+    if ess ≤ resampler.threshold * length(pc)
+        AdvancedPS.resample_propagate!(rng, pc, sampler, resampler.resampler, ref; weights=weights)
+    else
+        println("update_keys!")
+        AdvancedPS.update_keys!(pc, ref)
+    end
+
+    return pc
+end
+
 # Pkg.develop(path="/Users/pyong/ppl/aps")
 # Pkg.add(path="https://github.com/TuringLang/AdvancedPS.jl.git", rev="dc902432")
 
@@ -196,9 +217,9 @@ Distributions.logpdf(::MyNorm, x) = logpdf(Normal(), x)
     #     @info x3
     # end
 
-    @testset "Sampler" begin
-        @show Random.Sampler(StableRNG(468), UInt64)
-    end
+    # @testset "Sampler" begin
+    #     @show Random.Sampler(StableRNG(468), UInt64)
+    # end
     
     # @testset "tracedrng no seed" begin
     #     rng = AdvancedPS.TracedRNG()
