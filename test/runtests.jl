@@ -12,6 +12,25 @@ function AdvancedPS.gen_seed(rng::Random.AbstractRNG, ::AdvancedPS.TracedRNG{<:I
     @show "1", rng, x
     return x
 end
+function AdvancedPS.seed_from_rng!(
+    pc::ParticleContainer{T,<:TracedRNG{R,N,<:Random123.AbstractR123{I}}},
+    rng::Random.AbstractRNG,
+    ref::Union{Particle,Nothing}=nothing,
+) where {T,R,N,I}
+    n = length(pc.vals)
+    nseeds = isnothing(ref) ? n : n - 1
+    @show I
+
+    sampler = Random.Sampler(rng, I)
+    @show sampler
+    for i in 1:nseeds
+        subrng = pc.vals[i].rng
+        Random.seed!(subrng, gen_seed(rng, subrng, sampler))
+    end
+    Random.seed!(pc.rng, gen_seed(rng, pc.rng, sampler))
+
+    return pc
+end
 
 # Pkg.develop(path="/Users/pyong/ppl/aps")
 # Pkg.add(path="https://github.com/TuringLang/AdvancedPS.jl.git", rev="dc902432")
@@ -68,36 +87,36 @@ Distributions.logpdf(::MyNorm, x) = logpdf(Normal(), x)
         @show Random.Sampler(StableRNG(468), UInt64)
     end
     
-    @testset "tracedrng no seed" begin
-        rng = AdvancedPS.TracedRNG()
-        @show rng
-    end
-
-    @testset "tracedrng no seed 2" begin
-        rng = AdvancedPS.TracedRNG()
-        @show rng
-    end
-
-    @testset "tracedrng seed" begin
-        Random.seed!(468)
-        rng = AdvancedPS.TracedRNG()
-        @show rng
-    end
-
-    @testset "tracedrng seed 2" begin
-        Random.seed!(468)
-        rng = AdvancedPS.TracedRNG()
-        @show rng
-    end
+    # @testset "tracedrng no seed" begin
+    #     rng = AdvancedPS.TracedRNG()
+    #     @show rng
+    # end
+    #
+    # @testset "tracedrng no seed 2" begin
+    #     rng = AdvancedPS.TracedRNG()
+    #     @show rng
+    # end
+    #
+    # @testset "tracedrng seed" begin
+    #     Random.seed!(468)
+    #     rng = AdvancedPS.TracedRNG()
+    #     @show rng
+    # end
+    #
+    # @testset "tracedrng seed 2" begin
+    #     Random.seed!(468)
+    #     rng = AdvancedPS.TracedRNG()
+    #     @show rng
+    # end
 
     # reproducibly different
-    # @testset "pg"  begin
-    #     @model function f()
-    #         x ~ MyNorm()
-    #     end
-    #     Random.seed!(468)
-    #     alg = PG(15)
-    #     chain = sample(StableRNG(468), f(), alg, 10; progress=false)
-    #     @show mean(chain[:x])
-    # end
+    @testset "pg"  begin
+        @model function f()
+            x ~ MyNorm()
+        end
+        Random.seed!(468)
+        alg = PG(15)
+        chain = sample(StableRNG(468), f(), alg, 10; progress=false)
+        @show mean(chain[:x])
+    end
 end
