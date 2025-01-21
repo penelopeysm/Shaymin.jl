@@ -29,10 +29,8 @@ end
 
 function my_split(key::Integer, n::Integer=1)
     T = typeof(key) # Make sure the type of `key` is consistent on W32 and W64 systems.
-    @show T
-    @show typeof(UInt(1))
-    retval = T[hash(key, i) for i in UInt(1):UInt(n)]
-    @show retval
+    inner_rng = Random.MersenneTwister(key)
+    retval = rand(inner_rng, T, n)
     return retval
 end
 
@@ -113,20 +111,19 @@ Distributions.logpdf(::MyNorm, x) = logpdf(Normal(), x)
     #     @show rng
     # end
     
-    @testset "hash" begin
-        T = UInt64
-        @show hash(T(468), hash(T(1)))
-        @show hash(T(468), hash(T(2)))
-        @show hash(T(468), hash(T(3)))
+    @testset "split" begin
+        my_split(UInt64(468))
+        my_split(UInt64(469))
+        my_split(UInt64(470))
     end
 
-    # @testset "pg"  begin
-    #     @model function f()
-    #         x ~ MyNorm()
-    #     end
-    #     Random.seed!(468)
-    #     alg = PG(15)
-    #     chain = sample(StableRNG(468), f(), alg, 10; progress=false)
-    #     @show mean(chain[:x])
-    # end
+    @testset "pg"  begin
+        @model function f()
+            x ~ MyNorm()
+        end
+        Random.seed!(468)
+        alg = PG(15)
+        chain = sample(StableRNG(468), f(), alg, 10; progress=false)
+        @show mean(chain[:x])
+    end
 end
