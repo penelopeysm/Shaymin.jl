@@ -31,6 +31,7 @@ function AdvancedPS.seed_from_rng!(
         Random.seed!(subrng, AdvancedPS.gen_seed(rng, subrng, sampler))
     end
     Random.seed!(pc.rng, AdvancedPS.gen_seed(rng, pc.rng, sampler))
+    println("1")
     @show [v.rng for v in pc.vals]
     return pc
 end
@@ -54,10 +55,12 @@ function DynamicPPL.initialstep(
         AdvancedPS.TracedRNG(),
         rng,
     )
+    println("2")
     @show [v.rng for v in particles.vals]
 
     # Perform a particle sweep.
     logevidence = AdvancedPS.sweep!(rng, particles, spl.alg.resampler, spl)
+    println("3")
     @show [v.rng for v in particles.vals]
 
     # Pick a particle to be retained.
