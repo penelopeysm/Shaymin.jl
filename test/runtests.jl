@@ -26,9 +26,9 @@ function AdvancedPS.seed_from_rng!(
     @show sampler
     for i in 1:nseeds
         subrng = pc.vals[i].rng
-        Random.seed!(subrng, gen_seed(rng, subrng, sampler))
+        Random.seed!(subrng, AdvancedPS.gen_seed(rng, subrng, sampler))
     end
-    Random.seed!(pc.rng, gen_seed(rng, pc.rng, sampler))
+    Random.seed!(pc.rng, AdvancedPS.gen_seed(rng, pc.rng, sampler))
 
     return pc
 end
