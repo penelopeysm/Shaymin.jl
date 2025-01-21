@@ -60,6 +60,7 @@ function DynamicPPL.initialstep(
 
     # Perform a particle sweep.
     logevidence = AdvancedPS.sweep!(rng, particles, spl.alg.resampler, spl)
+    @show logevidence
     println("3")
     @show [v.rng for v in particles.vals]
 
