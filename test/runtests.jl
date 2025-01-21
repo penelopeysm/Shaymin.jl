@@ -63,6 +63,10 @@ Distributions.logpdf(::MyNorm, x) = logpdf(Normal(), x)
     #     x3 = randn(rng, 3)
     #     @info x3
     # end
+
+    @testset "Sampler" begin
+        @show Random.Sampler(StableRNG(468), UInt64)
+    end
     
     @testset "tracedrng no seed" begin
         rng = AdvancedPS.TracedRNG()
