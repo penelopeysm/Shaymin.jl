@@ -81,6 +81,70 @@ function DynamicPPL.initialstep(
     return transition, state
 end
 
+function AdvancedPS.resample_propagate!(
+    ::Random.AbstractRNG,
+    pc::AdvancedPS.ParticleContainer,
+    sampler::T,
+    randcat=AdvancedPS.DEFAULT_RESAMPLER,
+    ref::Union{AdvancedPS.Particle,Nothing}=nothing;
+    weights=AdvancedPS.getweights(pc),
+) where {T<:AbstractMCMC.AbstractSampler}
+    # sample ancestor indices
+    n = length(pc)
+    nresamples = ref === nothing ? n : n - 1
+    indx = randcat(pc.rng, weights, nresamples)
+    println("resample_propagate!")
+    @show indx
+
+    # count number of children for each particle
+    num_children = zeros(Int, n)
+    @inbounds for i in indx
+        num_children[i] += 1
+    end
+
+    # fork particles
+    particles = collect(pc)
+    children = similar(particles)
+    j = 0
+    @inbounds for i in 1:n
+        ni = num_children[i]
+        if ni > 0
+            # fork first child
+            pi = particles[i]
+            isref = pi === ref
+            p = isref ? AdvancedPS.fork(pi, isref) : pi
+
+            key = isref ? AdvancedPS.safe_get_refseed(ref.rng) : AdvancedPS.state(p.rng.rng) # Pick up the alternative rng stream if using the reference particle
+            nsplits = isref ? ni + 1 : ni # We need one more seed to refresh the alternative rng stream
+            seeds = split(key, nsplits)
+            isref && AdvancedPS.safe_set_refseed!(ref.rng, seeds[end]) # Refresh the alternative rng stream
+
+            Random.seed!(p.rng, seeds[1])
+
+            children[j += 1] = p
+            # fork additional children
+            for k in 2:ni
+                part = AdvancedPS.fork(p, isref)
+                Random.seed!(part.rng, seeds[k])
+                children[j += 1] = part
+            end
+        end
+    end
+
+    if ref !== nothing
+        # Insert the retained particle. This is based on the replaying trick for efficiency
+        # reasons. If we implement PG using task copying, we need to store Nx * T particles!
+        AdvancedPS.update_ref!(ref, pc, sampler)
+        @inbounds children[n] = ref
+    end
+
+    # replace particles and log weights in the container with new particles and weights
+    pc.vals = children
+    AdvancedPS.reset_logweights!(pc)
+
+    return pc
+end
+
 # Pkg.develop(path="/Users/pyong/ppl/aps")
 # Pkg.add(path="https://github.com/TuringLang/AdvancedPS.jl.git", rev="dc902432")
 
