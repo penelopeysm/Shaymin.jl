@@ -30,7 +30,7 @@ end
 function my_split(key::Integer, n::Integer=1)
     T = typeof(key) # Make sure the type of `key` is consistent on W32 and W64 systems.
     @show T
-    @show UInt(1)
+    @show typeof(UInt(1))
     retval = T[hash(key, i) for i in UInt(1):UInt(n)]
     @show retval
     return retval
@@ -117,6 +117,9 @@ Distributions.logpdf(::MyNorm, x) = logpdf(Normal(), x)
         @show hash(UInt64(468), UInt(1))
         @show hash(UInt64(468), UInt(2))
         @show hash(UInt64(468), UInt(3))
+        @show hash(UInt64(468), UInt64(1))
+        @show hash(UInt64(468), UInt64(2))
+        @show hash(UInt64(468), UInt64(3))
     end
 
     # reproducibly different
