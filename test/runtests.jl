@@ -174,13 +174,21 @@ function AdvancedPS.update_keys!(pc::AdvancedPS.ParticleContainer, ref::Union{Ad
     n = ref === nothing ? nparticles : nparticles - 1
     for i in 1:n
         pi = pc.vals[i]
-        k = AdvancedPS.split(AdvancedPS.state(pi.rng.rng))
+        k = my_split(AdvancedPS.state(pi.rng.rng))
         @show k
         Random.seed!(pi.rng, k[1])
     end
     println("update_keys! end")
     @show [v.rng for v in pc.vals]
     return nothing
+end
+
+function my_split(key::Integer, n::Integer=1)
+    T = typeof(key) # Make sure the type of `key` is consistent on W32 and W64 systems.
+    @show T
+    retval = T[hash(key, i) for i in UInt(1):UInt(n)]
+    @show retval
+    return retval
 end
 
 # Pkg.develop(path="/Users/pyong/ppl/aps")
