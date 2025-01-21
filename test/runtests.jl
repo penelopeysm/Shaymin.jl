@@ -175,6 +175,7 @@ function AdvancedPS.update_keys!(pc::AdvancedPS.ParticleContainer, ref::Union{Ad
     for i in 1:n
         pi = pc.vals[i]
         k = AdvancedPS.split(AdvancedPS.state(pi.rng.rng))
+        @show k
         Random.seed!(pi.rng, k[1])
     end
     println("update_keys! end")
