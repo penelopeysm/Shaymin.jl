@@ -114,22 +114,19 @@ Distributions.logpdf(::MyNorm, x) = logpdf(Normal(), x)
     # end
     
     @testset "hash" begin
-        @show hash(UInt64(468), UInt(1))
-        @show hash(UInt64(468), UInt(2))
-        @show hash(UInt64(468), UInt(3))
-        @show hash(UInt64(468), UInt64(1))
-        @show hash(UInt64(468), UInt64(2))
-        @show hash(UInt64(468), UInt64(3))
+        T = UInt64
+        @show hash(T(468), hash(T(1)))
+        @show hash(T(468), hash(T(2)))
+        @show hash(T(468), hash(T(3)))
     end
 
-    # reproducibly different
-    @testset "pg"  begin
-        @model function f()
-            x ~ MyNorm()
-        end
-        Random.seed!(468)
-        alg = PG(15)
-        chain = sample(StableRNG(468), f(), alg, 10; progress=false)
-        @show mean(chain[:x])
-    end
+    # @testset "pg"  begin
+    #     @model function f()
+    #         x ~ MyNorm()
+    #     end
+    #     Random.seed!(468)
+    #     alg = PG(15)
+    #     chain = sample(StableRNG(468), f(), alg, 10; progress=false)
+    #     @show mean(chain[:x])
+    # end
 end
