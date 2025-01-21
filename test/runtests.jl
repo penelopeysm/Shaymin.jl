@@ -267,15 +267,21 @@ Distributions.logpdf(::MyNorm, x) = logpdf(Normal(), x)
     #     rng = AdvancedPS.TracedRNG()
     #     @show rng
     # end
+    
+    @testset "hash" begin
+        @show hash(468, 1)
+        @show hash(468, 2)
+        @show hash(468, 3)
+    end
 
     # reproducibly different
-    @testset "pg"  begin
-        @model function f()
-            x ~ MyNorm()
-        end
-        Random.seed!(468)
-        alg = PG(15)
-        chain = sample(StableRNG(468), f(), alg, 10; progress=false)
-        @show mean(chain[:x])
-    end
+    # @testset "pg"  begin
+    #     @model function f()
+    #         x ~ MyNorm()
+    #     end
+    #     Random.seed!(468)
+    #     alg = PG(15)
+    #     chain = sample(StableRNG(468), f(), alg, 10; progress=false)
+    #     @show mean(chain[:x])
+    # end
 end
