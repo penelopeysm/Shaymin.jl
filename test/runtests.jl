@@ -1,5 +1,7 @@
 using Test
 using StableRNGs
+using DynamicPPL
+using AbstractMCMC
 using Random
 using Turing
 using Distributions
@@ -31,6 +33,44 @@ function AdvancedPS.seed_from_rng!(
     Random.seed!(pc.rng, AdvancedPS.gen_seed(rng, pc.rng, sampler))
     @show [v.rng for v in pc.vals]
     return pc
+end
+
+function DynamicPPL.initialstep(
+    rng::Random.AbstractRNG,
+    model::AbstractMCMC.AbstractModel,
+    spl::DynamicPPL.Sampler{<:PG},
+    vi::DynamicPPL.AbstractVarInfo;
+    kwargs...,
+)
+    # Reset the VarInfo before new sweep
+    DynamicPPL.reset_num_produce!(vi)
+    DynamicPPL.set_retained_vns_del_by_spl!(vi, spl)
+    DynamicPPL.resetlogp!!(vi)
+
+    # Create a new set of particles
+    num_particles = spl.alg.nparticles
+    particles = AdvancedPS.ParticleContainer(
+        [AdvancedPS.Trace(model, spl, vi, AdvancedPS.TracedRNG()) for _ in 1:num_particles],
+        AdvancedPS.TracedRNG(),
+        rng,
+    )
+    @show [v.rng for v in particles.vals]
+
+    # Perform a particle sweep.
+    logevidence = AdvancedPS.sweep!(rng, particles, spl.alg.resampler, spl)
+    @show [v.rng for v in particles.vals]
+
+    # Pick a particle to be retained.
+    Ws = AdvancedPS.getweights(particles)
+    indx = AdvancedPS.randcat(rng, Ws)
+    @show indx
+    reference = particles.vals[indx]
+
+    # Compute the first transition.
+    _vi = reference.model.f.varinfo
+    transition = Turing.PGTransition(model, _vi, logevidence)
+
+    return transition, Turing.PGState(_vi, reference.rng)
 end
 
 # Pkg.develop(path="/Users/pyong/ppl/aps")
