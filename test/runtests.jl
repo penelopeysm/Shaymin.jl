@@ -68,9 +68,9 @@ function DynamicPPL.initialstep(
 
     # Compute the first transition.
     _vi = reference.model.f.varinfo
-    transition = Turing.PGTransition(model, _vi, logevidence)
+    transition = Turing.Inference.PGTransition(model, _vi, logevidence)
 
-    return transition, Turing.PGState(_vi, reference.rng)
+    return transition, Turing.Inference.PGState(_vi, reference.rng)
 end
 
 # Pkg.develop(path="/Users/pyong/ppl/aps")
