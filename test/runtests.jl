@@ -119,7 +119,7 @@ Distributions.logpdf(::MyNorm, x) = logpdf(Normal(), x)
         @show hash(UInt64(468), UInt(3))
     end
 
-    reproducibly different
+    # reproducibly different
     @testset "pg"  begin
         @model function f()
             x ~ MyNorm()
