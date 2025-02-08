@@ -4,6 +4,7 @@ export shay
 
 """
     shay()
+    shay(n::Number)
 
 Generate a very cute number from a normal distribution.
 
@@ -17,8 +18,14 @@ julia> shay()
 -0.7193893056115281
 ```
 """
+# Normal
 function shay()
     return randn()
+end
+
+# Multiply by n
+function shay(n)
+    return randn() * n
 end
 
 end # module Shaymin
