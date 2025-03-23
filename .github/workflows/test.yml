@@ -11,30 +11,31 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        arch:
-          - x64
-          - x86
 
     steps:
       - uses: actions/checkout@v4
 
       - uses: julia-actions/setup-julia@v2
         with:
-          version: '1'
+          version: '1.11'
 
-      - uses: julia-actions/setup-julia@v2
+      - name: Load Julia packages from cache
+        id: julia-cache
+        uses: penelopeysm/julia-cache@main
         with:
-          version: '1'
+          cache-name: julia-cache;${{ hashFiles('**/Manifest.toml') }}
+          delete-old-caches: false
 
-      # - uses: julia-actions/setup-julia@v2
-      #   with:
-      #     version: '1'
-      #     arch: ${{ matrix.arch }}
-      #
-      # - uses: julia-actions/cache@v2
-      #
-      # - uses: julia-actions/julia-buildpkg@v1
-      #
-      # - uses: julia-actions/julia-runtest@v1
+      - name: Install some Julia stuff
+        run: julia -e 'using Pkg; Pkg.add("DynamicPPL")'
+
+      - name: Fail
+        run: exit 1
+
+      - name: Save Julia depot cache
+        id: julia-cache-save
+        if: always() && steps.julia-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: ${{ steps.julia-cache.outputs.cache-path }}
+          key: ${{ steps.julia-cache.outputs.cache-key }}
