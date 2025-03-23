@@ -24,7 +24,12 @@ jobs:
         uses: penelopeysm/julia-cache@main
         with:
           cache-name: julia-cache;${{ hashFiles('**/Manifest.toml') }}
-          delete-old-caches: false
+
+      - name: Print variables
+        run: |
+          echo "cache-hit: ${{ steps.julia-cache.outputs.cache-hit }}"
+          echo "cache-path: ${{ steps.julia-cache.outputs.cache-path }}"
+          echo "cache-key: ${{ steps.julia-cache.outputs.cache-key }}"
 
       - name: Install some Julia stuff
         run: julia -e 'using Pkg; Pkg.add("DynamicPPL")'
