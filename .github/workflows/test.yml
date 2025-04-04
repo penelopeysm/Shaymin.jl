@@ -35,8 +35,8 @@ jobs:
       - name: Install some Julia stuff
         run: julia -e 'using Pkg; Pkg.add("DynamicPPL")'
 
-      - name: Fail
-        run: exit 1
+      - name: Succeed
+        run: exit 0
 
       - name: Save Julia depot cache
         id: julia-cache-save
