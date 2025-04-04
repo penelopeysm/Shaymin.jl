@@ -22,7 +22,7 @@ jobs:
 
       - name: Load Julia packages from cache
         id: julia-cache
-        uses: penelopeysm/julia-cache@main
+        uses: julia-actions/cache@v2
         with:
           cache-name: julia-cache;${{ hashFiles('**/Manifest.toml') }}
 
@@ -40,7 +40,7 @@ jobs:
 
       - name: Save Julia depot cache
         id: julia-cache-save
-        if: always() && steps.julia-cache.outputs.cache-hit != 'true'
+        if: failure() && steps.julia-cache.outputs.cache-hit != 'true'
         uses: actions/cache/save@v4
         with: 
           path: |
