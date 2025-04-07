@@ -22,7 +22,7 @@ jobs:
       - name: Get PR author
         id: author
         run: |
-          AUTHOR=gh pr view ${PR_NUMBER} --json author -q .author.login
+          AUTHOR=$(gh pr view ${PR_NUMBER} --json author -q .author.login)
           echo "author=${AUTHOR}" >> $GITHUB_OUTPUT
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
