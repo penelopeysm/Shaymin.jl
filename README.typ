@@ -2,6 +2,8 @@ Hello, world.
 
 = A heading
 
+aaaaaa
+
 == A subheading
 
 === Another heading
