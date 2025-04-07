@@ -16,33 +16,4 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: julia-actions/setup-julia@v2
-        with:
-          version: '1.11'
-
-      - name: Load Julia packages from cache
-        id: julia-cache
-        uses: julia-actions/cache@v2
-        with:
-          cache-name: julia-cache;${{ hashFiles('**/Manifest.toml') }}
-
-      - name: Print variables
-        run: |
-          echo "cache-hit: ${{ steps.julia-cache.outputs.cache-hit }}"
-          echo "cache-path: ${{ steps.julia-cache.outputs.cache-paths }}"
-          echo "cache-key: ${{ steps.julia-cache.outputs.cache-key }}"
-
-      - name: Install some Julia stuff
-        run: julia -e 'using Pkg; Pkg.add("DynamicPPL")'
-
-      - name: Succeed
-        run: exit 0
-
-      - name: Save Julia depot cache
-        id: julia-cache-save
-        if: failure() && steps.julia-cache.outputs.cache-hit != 'true'
-        uses: actions/cache/save@v4
-        with: 
-          path: |
-            ${{ steps.julia-cache.outputs.cache-paths }}
-          key: ${{ steps.julia-cache.outputs.cache-key }}
+      - run: true
