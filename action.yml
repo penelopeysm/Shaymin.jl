@@ -28,6 +28,6 @@ runs:
         for path in split(pkg_path, "\n")
             path = strip(path)
             if path != ""
-                println("Got path: $path")
+                println("Got path: '$path'")
             end
         end

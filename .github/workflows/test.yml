@@ -14,6 +14,6 @@ jobs:
         uses: penelopeysm/Shaymin.jl@main
         with:
           paths: |
-            path1
+            \ path1
             path2
             path3
