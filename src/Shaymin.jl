@@ -28,4 +28,14 @@ function shay(n)
     return randn() * n
 end
 
+function fib(n)
+    if n == 0
+        return 1
+    elseif n == 1
+        return 1
+    else
+        return fib(n - 1) + fib(n - 2)
+    end
+end
+
 end # module Shaymin
