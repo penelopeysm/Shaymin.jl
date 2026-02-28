@@ -5,13 +5,11 @@ import Enzyme as E
 vec_wrap(x) = [x]
 only_wrap(x) = x[]
 
-struct ProductVecTransform{TTrf,Trng}
-    transforms::TTrf
+struct ProductVecTransform{Trng}
     ranges::Trng
 end
 
-struct ProductVecInvTransform{TTrf,Trng}
-    transforms::TTrf
+struct ProductVecInvTransform{Trng}
     ranges::Trng
 end
 
@@ -27,8 +25,8 @@ function (t::ProductVecInvTransform)(y::AbstractVector{T}) where {T}
     return x
 end
 
-ffwd = ProductVecTransform((vec_wrap,), (1:1,))
-frvs = ProductVecInvTransform((only_wrap,), (1:1,))
+ffwd = ProductVecTransform((1:1,))
+frvs = ProductVecInvTransform((1:1,))
 
 f = ffwd ∘ frvs
 xvec = randn(1)
