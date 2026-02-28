@@ -3,19 +3,8 @@ import Enzyme as E
 
 # Minimal reproducer for Enzyme + @generated function segfault on Windows + Julia 1.12
 
-abstract type ScalarToScalarBijector end
-struct TypedIdentity <: ScalarToScalarBijector end
-(::TypedIdentity)(x) = x
-
-struct VectWrap{B<:ScalarToScalarBijector}
-    bijector::B
-end
-(w::VectWrap)(x) = [w.bijector(x)]
-
-struct OnlyWrap{B<:ScalarToScalarBijector}
-    bijector::B
-end
-(w::OnlyWrap)(x) = w.bijector(x[])
+vec_wrap(x) = [x]
+only_wrap(x) = x[]
 
 struct ProductVecTransform{TTrf,Trng,D}
     transforms::TTrf
@@ -62,9 +51,8 @@ end
     return Expr(:block, exprs...)
 end
 
-# Manually construct what _make_transform(product_distribution(Normal())) would produce
-ffwd = ProductVecTransform((VectWrap(TypedIdentity()),), (1:1,), ())
-frvs = ProductVecInvTransform((OnlyWrap(TypedIdentity()),), (1:1,), ())
+ffwd = ProductVecTransform((vec_wrap,), (1:1,), ())
+frvs = ProductVecInvTransform((only_wrap,), (1:1,), ())
 
 adtype = DI.AutoEnzyme(; mode=E.Forward, function_annotation=E.Const)
 
