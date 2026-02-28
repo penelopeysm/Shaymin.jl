@@ -1,5 +1,8 @@
 using Test
 using Distributions
+import DifferentiationInterface as DI
+import EnzymeCore as EC
+using ForwardDiff, ReverseDiff, Mooncake, Enzyme
 
 # Minimal inline of VectorBijectors product distribution code to reproduce segfault on Windows.
 
@@ -28,6 +31,12 @@ end
 (w::OnlyWrap)(x) = w.bijector(x[])
 function wladj(w::OnlyWrap, x::AbstractVector)
     return wladj(w.bijector, x[])
+end
+
+function wladj(f::ComposedFunction, x)
+    y_inner, ladj_inner = wladj(f.inner, x)
+    y, ladj_outer = wladj(f.outer, y_inner)
+    return (y, ladj_inner + ladj_outer)
 end
 
 to_vec(::UnivariateDistribution) = VectWrap(TypedIdentity())
@@ -201,4 +210,35 @@ d = product_distribution(Normal())
 
     y, logjac = wladj(ffwd_l, x)
     @test y ≈ ffwd_l(x)
+end
+
+# -- AD test --
+adtypes = [
+    # DI.AutoForwardDiff(),
+    # DI.AutoReverseDiff(),
+    # DI.AutoReverseDiff(; compile=true),
+    # DI.AutoMooncake(),
+    # DI.AutoMooncakeForward(),
+    DI.AutoEnzyme(; mode=EC.Forward, function_annotation=EC.Const),
+    DI.AutoEnzyme(; mode=EC.Reverse, function_annotation=EC.Const),
+]
+
+@testset "AD" begin
+    x = rand(d)
+    xvec = _to_vec(d)(x)
+    ffwd = _to_linked_vec(d) ∘ _from_vec(d)
+    yvec = _to_linked_vec(d)(x)
+    frvs = _to_vec(d) ∘ _from_linked_vec(d)
+    ladj_fwd(xvec) = last(wladj(ffwd, xvec))
+    ladj_rvs(yvec) = last(wladj(frvs, yvec))
+
+    for adtype in adtypes
+        @testset "$(adtype)" begin
+            DI.jacobian(ffwd, adtype, xvec)
+            DI.jacobian(frvs, adtype, yvec)
+            DI.gradient(ladj_fwd, adtype, xvec)
+            DI.gradient(ladj_rvs, adtype, yvec)
+            @test true
+        end
+    end
 end
