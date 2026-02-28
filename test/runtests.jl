@@ -52,11 +52,11 @@ end
 end
 
 ffwd = ProductVecTransform((vec_wrap,), (1:1,), ())
-# frvs = ProductVecInvTransform((only_wrap,), (1:1,), ())
+frvs = ProductVecInvTransform((only_wrap,), (1:1,), ())
 
 adtype = DI.AutoEnzyme(; mode=E.Forward, function_annotation=E.Const)
 
 xvec = randn(1)
-DI.jacobian(ffwd, adtype, xvec)
+DI.jacobian(ffwd ∘ frvs, adtype, xvec)
 
 @info "Done"
