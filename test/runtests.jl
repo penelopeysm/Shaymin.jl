@@ -6,30 +6,53 @@ import Enzyme as E
 vec_wrap(x) = [x]
 only_wrap(x) = x[]
 
-struct Fwd{F,Trng,D}
-    f::F
+struct ProductVecTransform{TTrf,Trng,D}
+    transforms::TTrf
     ranges::Trng
     base_size::D
 end
-function (t::Fwd)(x::AbstractVector{T}) where {T}
-    y = Vector{T}(undef, 1)
-    y[t.ranges[1]] = (t.f[1])(x[1])
-    return y
-end
 
-struct Rvs{F,Trng,D}
-    f::F
+struct ProductVecInvTransform{TTrf,Trng,D}
+    transforms::TTrf
     ranges::Trng
     base_size::D
 end
-function (t::Rvs)(y::AbstractVector{T}) where {T}
-    x = Vector{T}(undef, 1)
-    x[1] = (t.f[1])(view(y, t.ranges[1]))
-    return x
+
+@generated function (t::ProductVecTransform{<:NTuple{P,Any},<:NTuple{P,Any},<:NTuple{N,Int}})(
+    x::AbstractArray{T}
+) where {P,N,T}
+    exprs = []
+    push!(exprs, :(total_length = sum(length, t.ranges)))
+    push!(exprs, :(y = Vector{T}(undef, total_length)))
+    colons = fill(:, N)
+    for i in 1:P
+        if N == 0
+            push!(exprs, :(y[t.ranges[$i]] = t.transforms[$i](x[$i])))
+        else
+            push!(exprs, :(y[t.ranges[$i]] .= t.transforms[$i](view(x, $colons..., $i))))
+        end
+    end
+    push!(exprs, :(return y))
+    return Expr(:block, exprs...)
 end
 
-ffwd = Fwd((vec_wrap,), (1:1,), ())
-frvs = Rvs((only_wrap,), (1:1,), ())
+#! format: off
+@generated function (t::ProductVecInvTransform{<:NTuple{P,Any},<:NTuple{P,Any},<:NTuple{N,Int}})(
+    y::AbstractVector{T}
+) where {P,N,T}
+#! format: on
+    exprs = []
+    push!(exprs, :(x = Array{T}(undef, t.base_size..., P)))
+    colons = fill(:, N)
+    for i in 1:P
+        push!(exprs, :(x[$colons..., $i] = t.transforms[$i](view(y, t.ranges[$i]))))
+    end
+    push!(exprs, :(return x))
+    return Expr(:block, exprs...)
+end
+
+ffwd = ProductVecTransform((vec_wrap,), (1:1,), ())
+frvs = ProductVecInvTransform((only_wrap,), (1:1,), ())
 
 adtype = DI.AutoEnzyme(; mode=E.Forward, function_annotation=E.Const)
 
