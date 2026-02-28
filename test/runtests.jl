@@ -6,53 +6,43 @@ import Enzyme as E
 vec_wrap(x) = [x]
 only_wrap(x) = x[]
 
-struct ProductVecTransform{TTrf,Trng,D}
+struct ProductVecTransform{TTrf,Trng}
     transforms::TTrf
     ranges::Trng
-    base_size::D
 end
 
-struct ProductVecInvTransform{TTrf,Trng,D}
+struct ProductVecInvTransform{TTrf,Trng}
     transforms::TTrf
     ranges::Trng
-    base_size::D
 end
 
-@generated function (t::ProductVecTransform{<:NTuple{P,Any},<:NTuple{P,Any},<:NTuple{N,Int}})(
+@generated function (t::ProductVecTransform{<:NTuple{P,Any},<:NTuple{P,Any}})(
     x::AbstractArray{T}
-) where {P,N,T}
+) where {P,T}
     exprs = []
     push!(exprs, :(total_length = sum(length, t.ranges)))
     push!(exprs, :(y = Vector{T}(undef, total_length)))
-    colons = fill(:, N)
     for i in 1:P
-        if N == 0
-            push!(exprs, :(y[t.ranges[$i]] = t.transforms[$i](x[$i])))
-        else
-            push!(exprs, :(y[t.ranges[$i]] .= t.transforms[$i](view(x, $colons..., $i))))
-        end
+        push!(exprs, :(y[t.ranges[$i]] = t.transforms[$i](x[$i])))
     end
     push!(exprs, :(return y))
     return Expr(:block, exprs...)
 end
 
-#! format: off
-@generated function (t::ProductVecInvTransform{<:NTuple{P,Any},<:NTuple{P,Any},<:NTuple{N,Int}})(
+@generated function (t::ProductVecInvTransform{<:NTuple{P,Any},<:NTuple{P,Any}})(
     y::AbstractVector{T}
-) where {P,N,T}
-#! format: on
+) where {P,T}
     exprs = []
-    push!(exprs, :(x = Array{T}(undef, t.base_size..., P)))
-    colons = fill(:, N)
+    push!(exprs, :(x = Vector{T}(undef, P)))
     for i in 1:P
-        push!(exprs, :(x[$colons..., $i] = t.transforms[$i](view(y, t.ranges[$i]))))
+        push!(exprs, :(x[$i] = t.transforms[$i](view(y, t.ranges[$i]))))
     end
     push!(exprs, :(return x))
     return Expr(:block, exprs...)
 end
 
-ffwd = ProductVecTransform((vec_wrap,), (1:1,), ())
-frvs = ProductVecInvTransform((only_wrap,), (1:1,), ())
+ffwd = ProductVecTransform((vec_wrap,), (1:1,))
+frvs = ProductVecInvTransform((only_wrap,), (1:1,))
 
 adtype = DI.AutoEnzyme(; mode=E.Forward, function_annotation=E.Const)
 
