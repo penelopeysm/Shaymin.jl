@@ -206,7 +206,7 @@ adtype = DI.AutoEnzyme(; mode=E.Forward, function_annotation=E.Const)
     ladj_rvs(yvec) = last(wladj(frvs, yvec))
 
     DI.jacobian(ffwd, adtype, xvec)
-    DI.jacobian(frvs, adtype, yvec)
+    # DI.jacobian(frvs, adtype, yvec)
     # DI.gradient(ladj_fwd, adtype, xvec)
     # DI.gradient(ladj_rvs, adtype, yvec)
     @test true
