@@ -11,7 +11,7 @@ struct Fwd{F}
 end
 function (t::Fwd)(x::AbstractVector{T}) where {T}
     y = Vector{T}(undef, 1)
-    y[1] = t.f(x[1])
+    y[1:1] = t.f(x[1])
     return y
 end
 
