@@ -32,6 +32,6 @@ frvs = ProductVecInvTransform((only_wrap,), (1:1,))
 
 f = ffwd ∘ frvs
 xvec = randn(1)
-E.jacobian(E.Forward, f, xvec)
+E.jacobian(E.Reverse, f, xvec)
 
 @info "Done"
