@@ -18,6 +18,6 @@ end
 #     # return x
 # end
 
-f = Foo1((1:1,)) ∘ identity
+f = Foo1((1:1,))
 x = randn(1)
 jacobian(Forward, f, x)
