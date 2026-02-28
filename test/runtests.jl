@@ -1,7 +1,7 @@
-using Enzyme: Forward, Reverse, jacobian
 using InteractiveUtils: versioninfo
+versioninfo()
 
-display(versioninfo())
+using Enzyme: Forward, Reverse, jacobian
 
 struct F{S}
     ranges::S
