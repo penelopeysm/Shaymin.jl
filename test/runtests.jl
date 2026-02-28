@@ -166,16 +166,16 @@ end
     return Expr(:block, exprs...)
 end
 
-function _to_vec(d::ProductDistribution)
+function _to_vec(d::Distributions.ProductDistribution)
     return _make_transform(d.dists, to_vec, vec_length, ProductVecTransform)
 end
-function _from_vec(d::ProductDistribution)
+function _from_vec(d::Distributions.ProductDistribution)
     return _make_transform(d.dists, from_vec, vec_length, ProductVecInvTransform)
 end
-function _to_linked_vec(d::ProductDistribution)
+function _to_linked_vec(d::Distributions.ProductDistribution)
     return _make_transform(d.dists, to_linked_vec, linked_vec_length, ProductVecTransform)
 end
-function _from_linked_vec(d::ProductDistribution)
+function _from_linked_vec(d::Distributions.ProductDistribution)
     return _make_transform(
         d.dists, from_linked_vec, linked_vec_length, ProductVecInvTransform
     )
