@@ -1,7 +1,7 @@
 using InteractiveUtils: versioninfo
 versioninfo()
 
-using Enzyme: Forward, Reverse, jacobian
+using Enzyme: Forward, Reverse, jacobian, Enzyme
 Enzyme.Compiler.VERBOSE_ERRORS[] = true
 
 struct F{S}
