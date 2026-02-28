@@ -192,10 +192,9 @@ end
 # -- test --
 d = product_distribution(Normal())
 
-adtypes = [
-    DI.AutoEnzyme(; mode=E.Forward, function_annotation=E.Const),
-    # DI.AutoEnzyme(; mode=E.Reverse, function_annotation=E.Const),
-]
+
+adtype = DI.AutoEnzyme(; mode=E.Forward, function_annotation=E.Const)
+# adtype = DI.AutoEnzyme(; mode=E.Reverse, function_annotation=E.Const)
 
 @testset "AD" begin
     x = rand(d)
