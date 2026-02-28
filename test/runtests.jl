@@ -22,4 +22,4 @@ end
 
 f = Foo1((1:1,)) ∘ Foo2((1:1,))
 x = randn(1)
-jacobian(E.Forward, f, x)
+jacobian(Forward, f, x)
