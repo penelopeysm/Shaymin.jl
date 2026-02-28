@@ -6,40 +6,43 @@ import Enzyme as E
 vec_wrap(x) = [x]
 only_wrap(x) = x[]
 
-struct ProductVecTransform{TTrf}
+struct ProductVecTransform{TTrf,Trng}
     transforms::TTrf
+    ranges::Trng
 end
 
-struct ProductVecInvTransform{TTrf}
+struct ProductVecInvTransform{TTrf,Trng}
     transforms::TTrf
+    ranges::Trng
 end
 
-@generated function (t::ProductVecTransform{<:NTuple{P,Any}})(
+@generated function (t::ProductVecTransform{<:NTuple{P,Any},<:NTuple{P,Any}})(
     x::AbstractArray{T}
 ) where {P,T}
     exprs = []
-    push!(exprs, :(y = Vector{T}(undef, P)))
+    push!(exprs, :(total_length = sum(length, t.ranges)))
+    push!(exprs, :(y = Vector{T}(undef, total_length)))
     for i in 1:P
-        push!(exprs, :(y[1:1] = t.transforms[$i](x[$i])))
+        push!(exprs, :(y[t.ranges[$i]] = t.transforms[$i](x[$i])))
     end
     push!(exprs, :(return y))
     return Expr(:block, exprs...)
 end
 
-@generated function (t::ProductVecInvTransform{<:NTuple{P,Any}})(
+@generated function (t::ProductVecInvTransform{<:NTuple{P,Any},<:NTuple{P,Any}})(
     y::AbstractVector{T}
 ) where {P,T}
     exprs = []
     push!(exprs, :(x = Vector{T}(undef, P)))
     for i in 1:P
-        push!(exprs, :(x[$i] = t.transforms[$i](view(y, 1:1))))
+        push!(exprs, :(x[$i] = t.transforms[$i](view(y, t.ranges[$i]))))
     end
     push!(exprs, :(return x))
     return Expr(:block, exprs...)
 end
 
-ffwd = ProductVecTransform((vec_wrap,))
-frvs = ProductVecInvTransform((only_wrap,))
+ffwd = ProductVecTransform((vec_wrap,), (1:1,))
+frvs = ProductVecInvTransform((only_wrap,), (1:1,))
 
 adtype = DI.AutoEnzyme(; mode=E.Forward, function_annotation=E.Const)
 
