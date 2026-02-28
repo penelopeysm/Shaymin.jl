@@ -1,8 +1,7 @@
 using Test
 using Distributions
 import DifferentiationInterface as DI
-import EnzymeCore as EC
-using ForwardDiff, ReverseDiff, Mooncake, Enzyme
+import Enzyme as E
 
 # Minimal inline of VectorBijectors product distribution code to reproduce segfault on Windows.
 
@@ -168,7 +167,7 @@ end
     push!(exprs, :(offset = 1))
     for i in 1:NDists
         push!(exprs, :(this_length = length_fn(dists[$i])))
-        push!(exprs, :(ranges = (ranges..., offset:(offset + this_length - 1))))
+        push!(exprs, :(ranges = (ranges..., offset:(offset+this_length-1))))
         push!(exprs, :(offset += this_length))
     end
     push!(exprs, :(return struct_type(trfms, ranges, size(dists[1]))))
@@ -194,31 +193,22 @@ end
 d = product_distribution(Normal())
 
 adtypes = [
-    # DI.AutoForwardDiff(),
-    # DI.AutoReverseDiff(),
-    # DI.AutoReverseDiff(; compile=true),
-    # DI.AutoMooncake(),
-    # DI.AutoMooncakeForward(),
-    DI.AutoEnzyme(; mode=EC.Forward, function_annotation=EC.Const),
-    DI.AutoEnzyme(; mode=EC.Reverse, function_annotation=EC.Const),
+    DI.AutoEnzyme(; mode=E.Forward, function_annotation=E.Const),
+    # DI.AutoEnzyme(; mode=E.Reverse, function_annotation=E.Const),
 ]
 
-# @testset "AD" begin
-#     x = rand(d)
-#     xvec = _to_vec(d)(x)
-#     ffwd = _to_linked_vec(d) ∘ _from_vec(d)
-#     yvec = _to_linked_vec(d)(x)
-#     frvs = _to_vec(d) ∘ _from_linked_vec(d)
-#     ladj_fwd(xvec) = last(wladj(ffwd, xvec))
-#     ladj_rvs(yvec) = last(wladj(frvs, yvec))
-#
-#     for adtype in adtypes
-#         @testset "$(adtype)" begin
-#             DI.jacobian(ffwd, adtype, xvec)
-#             DI.jacobian(frvs, adtype, yvec)
-#             DI.gradient(ladj_fwd, adtype, xvec)
-#             DI.gradient(ladj_rvs, adtype, yvec)
-#             @test true
-#         end
-#     end
-# end
+@testset "AD" begin
+    x = rand(d)
+    xvec = _to_vec(d)(x)
+    ffwd = _to_linked_vec(d) ∘ _from_vec(d)
+    yvec = _to_linked_vec(d)(x)
+    frvs = _to_vec(d) ∘ _from_linked_vec(d)
+    ladj_fwd(xvec) = last(wladj(ffwd, xvec))
+    ladj_rvs(yvec) = last(wladj(frvs, yvec))
+
+    DI.jacobian(ffwd, adtype, xvec)
+    DI.jacobian(frvs, adtype, yvec)
+    # DI.gradient(ladj_fwd, adtype, xvec)
+    # DI.gradient(ladj_rvs, adtype, yvec)
+    @test true
+end
