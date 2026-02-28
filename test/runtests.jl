@@ -1,9 +1,4 @@
-import Enzyme as E
-
-# Minimal reproducer for Enzyme + callable struct with UnitRange field segfault on Windows + Julia 1.12
-
-vec_wrap(x) = [x]
-only_wrap(x) = x[]
+using Enzyme: Forward, Reverse, jacobian
 
 struct ProductVecTransform{Trng}
     ranges::Trng
@@ -30,6 +25,6 @@ frvs = ProductVecInvTransform((1:1,))
 
 f = ffwd ∘ frvs
 xvec = randn(1)
-E.jacobian(E.Forward, f, xvec)
+jacobian(Forward, f, xvec)
 
 @info "Done"
