@@ -6,9 +6,10 @@ import Enzyme as E
 vec_wrap(x) = [x]
 only_wrap(x) = x[]
 
-struct Fwd{F,Trng}
+struct Fwd{F,Trng,D}
     f::F
     ranges::Trng
+    base_size::D
 end
 function (t::Fwd)(x::AbstractVector{T}) where {T}
     y = Vector{T}(undef, 1)
@@ -16,9 +17,10 @@ function (t::Fwd)(x::AbstractVector{T}) where {T}
     return y
 end
 
-struct Rvs{F,Trng}
+struct Rvs{F,Trng,D}
     f::F
     ranges::Trng
+    base_size::D
 end
 function (t::Rvs)(y::AbstractVector{T}) where {T}
     x = Vector{T}(undef, 1)
@@ -26,8 +28,8 @@ function (t::Rvs)(y::AbstractVector{T}) where {T}
     return x
 end
 
-ffwd = Fwd(vec_wrap, (1:1,))
-frvs = Rvs(only_wrap, (1:1,))
+ffwd = Fwd(vec_wrap, (1:1,), ())
+frvs = Rvs(only_wrap, (1:1,), ())
 
 adtype = DI.AutoEnzyme(; mode=E.Forward, function_annotation=E.Const)
 
