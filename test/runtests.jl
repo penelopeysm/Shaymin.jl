@@ -9,8 +9,7 @@ struct ProductVecInvTransform{Trng}
 end
 
 function (t::ProductVecTransform)(x::AbstractArray{T}) where {T}
-    total_length = sum(length, t.ranges)
-    y = Vector{T}(undef, total_length)
+    y = Vector{T}(undef, 1)
     y[t.ranges[1]] = [x[1]]
     return y
 end
