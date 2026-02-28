@@ -3,9 +3,7 @@ using Enzyme: Forward, Reverse, jacobian
 struct Foo1{Trng}
     ranges::Trng
 end
-struct Foo2{Trng}
-    ranges::Trng
-end
+struct Foo2 end
 
 function (t::Foo1)(x::AbstractArray{T}) where {T}
     total_length = sum(length, t.ranges)
@@ -20,6 +18,6 @@ function (t::Foo2)(y::AbstractVector{T}) where {T}
     # return x
 end
 
-f = Foo1((1:1,)) ∘ Foo2((1:1,))
+f = Foo1((1:1,)) ∘ Foo2()
 x = randn(1)
 jacobian(Forward, f, x)
