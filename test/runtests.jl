@@ -2,6 +2,7 @@ using InteractiveUtils: versioninfo
 versioninfo()
 
 using Enzyme: Forward, Reverse, jacobian
+Enzyme.Compiler.VERBOSE_ERRORS[] = true
 
 struct F{S}
     ranges::S
