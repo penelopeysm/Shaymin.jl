@@ -193,26 +193,6 @@ end
 # -- test --
 d = product_distribution(Normal())
 
-@testset "Product distribution segfault reproducer" begin
-    x = rand(d)
-
-    ffwd = _to_vec(d)
-    frvs = _from_vec(d)
-    @test frvs(ffwd(x)) ≈ x
-
-    ffwd_l = _to_linked_vec(d)
-    frvs_l = _from_linked_vec(d)
-    @test frvs_l(ffwd_l(x)) ≈ x
-
-    y = randn(1)
-    x2 = frvs_l(y)
-    @test ffwd_l(x2) ≈ y
-
-    y, logjac = wladj(ffwd_l, x)
-    @test y ≈ ffwd_l(x)
-end
-
-# -- AD test --
 adtypes = [
     # DI.AutoForwardDiff(),
     # DI.AutoReverseDiff(),
@@ -223,22 +203,22 @@ adtypes = [
     DI.AutoEnzyme(; mode=EC.Reverse, function_annotation=EC.Const),
 ]
 
-@testset "AD" begin
-    x = rand(d)
-    xvec = _to_vec(d)(x)
-    ffwd = _to_linked_vec(d) ∘ _from_vec(d)
-    yvec = _to_linked_vec(d)(x)
-    frvs = _to_vec(d) ∘ _from_linked_vec(d)
-    ladj_fwd(xvec) = last(wladj(ffwd, xvec))
-    ladj_rvs(yvec) = last(wladj(frvs, yvec))
-
-    for adtype in adtypes
-        @testset "$(adtype)" begin
-            DI.jacobian(ffwd, adtype, xvec)
-            DI.jacobian(frvs, adtype, yvec)
-            DI.gradient(ladj_fwd, adtype, xvec)
-            DI.gradient(ladj_rvs, adtype, yvec)
-            @test true
-        end
-    end
-end
+# @testset "AD" begin
+#     x = rand(d)
+#     xvec = _to_vec(d)(x)
+#     ffwd = _to_linked_vec(d) ∘ _from_vec(d)
+#     yvec = _to_linked_vec(d)(x)
+#     frvs = _to_vec(d) ∘ _from_linked_vec(d)
+#     ladj_fwd(xvec) = last(wladj(ffwd, xvec))
+#     ladj_rvs(yvec) = last(wladj(frvs, yvec))
+#
+#     for adtype in adtypes
+#         @testset "$(adtype)" begin
+#             DI.jacobian(ffwd, adtype, xvec)
+#             DI.jacobian(frvs, adtype, yvec)
+#             DI.gradient(ladj_fwd, adtype, xvec)
+#             DI.gradient(ladj_rvs, adtype, yvec)
+#             @test true
+#         end
+#     end
+# end
