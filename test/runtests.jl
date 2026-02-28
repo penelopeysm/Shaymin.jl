@@ -7,7 +7,7 @@ end
 function (t::F)(x::AbstractArray{T}) where {T}
     total_length = sum(length, t.ranges)
     y = Vector{T}(undef, total_length)
-    y[t.ranges[1]] = [x[1]]
+    y[1:1] = [x[1]]
     return y
 end
 
