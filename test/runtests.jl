@@ -6,33 +6,26 @@ import Enzyme as E
 vec_wrap(x) = [x]
 only_wrap(x) = x[]
 
-struct ProductVecTransform{TTrf,Trng,D}
-    transforms::TTrf
-    ranges::Trng
-    base_size::D
+struct Fwd{F}
+    f::F
 end
-
-struct ProductVecInvTransform{TTrf,Trng,D}
-    transforms::TTrf
-    ranges::Trng
-    base_size::D
-end
-
-# What the @generated functions produce for P=1, N=0
-function (t::ProductVecTransform)(x::AbstractArray{T}) where {T}
-    y = Vector{T}(undef, sum(length, t.ranges))
-    y[t.ranges[1]] = t.transforms[1](x[1])
+function (t::Fwd)(x::AbstractVector{T}) where {T}
+    y = Vector{T}(undef, 1)
+    y[1] = t.f(x[1])
     return y
 end
 
-function (t::ProductVecInvTransform)(y::AbstractVector{T}) where {T}
-    x = Array{T}(undef, t.base_size..., 1)
-    x[1] = t.transforms[1](view(y, t.ranges[1]))
+struct Rvs{F}
+    f::F
+end
+function (t::Rvs)(y::AbstractVector{T}) where {T}
+    x = Vector{T}(undef, 1)
+    x[1] = t.f(view(y, 1:1))
     return x
 end
 
-ffwd = ProductVecTransform((vec_wrap,), (1:1,), ())
-frvs = ProductVecInvTransform((only_wrap,), (1:1,), ())
+ffwd = Fwd(vec_wrap)
+frvs = Rvs(only_wrap)
 
 adtype = DI.AutoEnzyme(; mode=E.Forward, function_annotation=E.Const)
 
