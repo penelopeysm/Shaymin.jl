@@ -4,16 +4,25 @@ on:
   push:
     branches:
       - main
+  pull_request:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        julia-version: ['1.12']
+        # julia-version: ['1.10', '1.11', '1.12']
 
     steps:
-      - name: Test
-        uses: penelopeysm/Shaymin.jl@main
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Julia ${{ matrix.julia-version }}
+        uses: julia-actions/setup-julia@v2
         with:
-          paths: |
-            \ path1
-            path2
-            path3
+          version: ${{ matrix.julia-version }}
+
+      - name: Run tests
+        uses: julia-actions/julia-runtest@v1
