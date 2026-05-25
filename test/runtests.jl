@@ -1,5 +1,7 @@
 s = raw"""
-hello
-world
+a
+b\
+c
+d
 """
 @show collect(codeunits(s))
