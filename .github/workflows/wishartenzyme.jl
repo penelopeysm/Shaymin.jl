@@ -2,13 +2,9 @@ using Enzyme
 
 function invpd(yvec::AbstractVector{T}) where {T<:Real}
     X = zeros(T, 2, 2)
-    idx = 1
-    for i in 1:2
-        for j in 1:i
-            X[i, j] = yvec[idx]
-            idx += 1
-        end
-    end
+    X[1, 1] = yvec[1]
+    X[1, 2] = yvec[2]
+    X[2, 1] = yvec[3]
     return X * X'
 end
 xv = randn(3)
