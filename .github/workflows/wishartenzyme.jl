@@ -1,27 +1,18 @@
 using Enzyme
 
-function invpd(d::Int, yvec::AbstractVector{T}) where {T<:Real}
-    X = zeros(T, d, d)
+function invpd(yvec::AbstractVector{T}) where {T<:Real}
+    X = zeros(T, 2, 2)
     idx = 1
-    z = zero(T)
-    weight = d + 1
-    for i in 1:d
+    for i in 1:2
         for j in 1:i
-            # if i == j
-            #     X[i, j] = exp(yvec[idx])
-            #     z += weight * yvec[idx]
-            #     weight -= 1
-            # else
-                X[i, j] = yvec[idx]
-            # end
+            X[i, j] = yvec[idx]
             idx += 1
         end
     end
-    return X * X'
+    return X
 end
-
 xv = randn(3)
-f(x) = sum(invpd(2, x))
+f(x) = sum(invpd(x))
 
 @info f(xv)
 @info gradient(Reverse, Const(f), xv)
