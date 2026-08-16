@@ -1,12 +1,11 @@
 using Enzyme
 
-function invpd(yvec::AbstractVector{T}) where {T<:Real}
-    X = zeros(T, 2, 2)
-    X[1, 1] = yvec[1]
-    return X * X'
+function f(y)
+    X = zeros(2, 2)
+    X[1, 1] = y[1]
+    return sum(X * X')
 end
-xv = randn(1)
-f(x) = sum(invpd(x))
+yv = randn(1)
+@info f(yv)
 
-@info f(xv)
-@info gradient(Reverse, Const(f), xv)
+@info gradient(Reverse, Const(f), yv)
