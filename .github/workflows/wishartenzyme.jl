@@ -3,7 +3,7 @@
 # adtype = AutoEnzyme(; mode=set_runtime_activity(Reverse), function_annotation=Const)
 # DynamicPPL.TestUtils.AD.run_ad(f(), adtype; test=false, benchmark=true)
 
-using Distributions, Enzyme
+using Enzyme
 
 struct InvPD
     original_size::Int
@@ -30,10 +30,9 @@ function (ip::InvPD)(yvec::AbstractVector{T}) where {T<:Real}
     return X * X' # , logjac
 end
 
-const d = Wishart(7, [1.0 0.5; 0.5 1.0])
 xv = randn(3)
 const invl = InvPD(2)
-f(x) = logpdf(d, invl(x))
+f(x) = sum(invl(x))
 
 @info f(xv)
 @info gradient(Reverse, Const(f), xv)
