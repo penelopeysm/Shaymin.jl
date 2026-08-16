@@ -9,7 +9,7 @@ function invpd(d::Int, yvec::AbstractVector{T}) where {T<:Real}
             idx += 1
         end
     end
-    return X
+    return X * X'
 end
 xv = randn(3)
 f(x) = sum(invpd(2, x))
