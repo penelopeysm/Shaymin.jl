@@ -1,10 +1,2 @@
-using Enzyme
-
-function f(y)
-    X = zeros(1, 1)
-    X[1, 1] = y[1]
-    return sum(X * X')
-end
-y = [0.5]
-@info f(y)
-@info gradient(Reverse, Const(f), y)
+v = Vector{Float64}(undef, 10^8)
+@info count(iszero, v)
