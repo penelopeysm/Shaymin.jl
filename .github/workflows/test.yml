@@ -32,4 +32,4 @@ jobs:
 
       - name: Run script
         working-directory: .github/workflows
-        run: julia --project=. test.jl
+        run: julia --project=. wishartenzyme.jl
